@@ -60,7 +60,7 @@ fi
 if [ ! -f "${TARGET_DIR}/bin/bash" ]; then
     echo "===> [2/4] Executing debootstrap (${UBUNTU_RELEASE} minbase)..."
     
-    DEBOOTSTRAP_PKGS="ca-certificates,apt-transport-https,gnupg,curl,wget,xz-utils"
+    DEBOOTSTRAP_PKGS="ca-certificates,gnupg,curl,wget,xz-utils"
     
     debootstrap \
         --arch=amd64 \
