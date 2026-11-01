@@ -191,8 +191,8 @@ REQUIRED_TOOLS=(
     mksquashfs
     xorriso
     grub-mkstandalone
-    mtools
-    dosfstools
+    mcopy
+    mkfs.vfat
     python3
     zstd
     curl
