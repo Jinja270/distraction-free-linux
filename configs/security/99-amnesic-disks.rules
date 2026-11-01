@@ -1,0 +1,12 @@
+# ==============================================================================
+# Distraction-Free Linux (Study OS) - Amnesic Host Disk Isolation
+# File: configs/security/99-amnesic-disks.rules
+# Purpose: Prevent internal NVMe, SATA/ATA, and internal eMMC disks from
+#          automounting, appearing in user space, or leaving forensic footprints.
+# ==============================================================================
+
+# Match non-removable internal drives by bus type and kernel naming
+SUBSYSTEM=="block", KERNEL=="nvme*|sd[a-z]*|mmcblk*", ATTR{removable}=="0", ENV{UDISKS_IGNORE}="1", ENV{UDISKS_AUTO}="0", ENV{UDISKS_SYSTEM_INTERNAL}="1"
+
+# Prevent CD/DVD automounting
+SUBSYSTEM=="block", KERNEL=="sr*", ENV{UDISKS_AUTO}="0"

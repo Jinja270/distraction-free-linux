@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Markdown Note Editor
+Comment=Lightweight distraction-free markdown and note-taking editor
+Exec=featherpad %F
+Icon=featherpad
+Terminal=false
+Categories=Office;Utility;TextEditor;
+MimeType=text/plain;text/markdown;text/x-markdown;
+StartupNotify=true

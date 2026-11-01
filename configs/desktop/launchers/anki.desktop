@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Anki Flashcards
+Comment=Spaced repetition flashcards for efficient study and memory retention
+Exec=anki %u
+Icon=anki
+Terminal=false
+Categories=Education;Languages;Qt;
+MimeType=application/x-apkg;application/x-anki-deck;
+StartupNotify=true

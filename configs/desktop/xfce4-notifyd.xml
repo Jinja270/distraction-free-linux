@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xfce4-notifyd" version="1.0">
+  <!-- Permanent Do Not Disturb Mode - locks notification suppression across sessions -->
+  <property name="do-not-disturb" type="bool" value="true"/>
+  
+  <!-- Suppress notification logging to prevent cognitive distraction and backlog reading -->
+  <property name="notification-log" type="bool" value="false"/>
+  
+  <!-- Zero-second popup duration -->
+  <property name="expire-timeout" type="int" value="0"/>
+  
+  <!-- Zero opacity for invisible rendering fallback -->
+  <property name="initial-opacity" type="double" value="0.0"/>
+  
+  <!-- Permanent silence on all notification audio events -->
+  <property name="mute-sounds" type="bool" value="true"/>
+  
+  <!-- Blacklist and mute all application notification origins -->
+  <property name="applications" type="empty">
+    <property name="known_applications" type="array">
+      <value type="string" value="firefox"/>
+      <value type="string" value="thunar"/>
+      <value type="string" value="update-manager"/>
+      <value type="string" value="anki"/>
+    </property>
+    <property name="muted_applications" type="array">
+      <value type="string" value="firefox"/>
+      <value type="string" value="thunar"/>
+      <value type="string" value="update-manager"/>
+      <value type="string" value="anki"/>
+    </property>
+  </property>
+</channel>

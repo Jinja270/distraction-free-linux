@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Zathura Minimalist PDF Viewer
+Comment=Ultra-minimalist keyboard-driven document viewer with dark recoloring
+Exec=zathura %U
+Icon=org.pwmt.zathura
+Terminal=false
+Categories=Office;Viewer;
+MimeType=application/pdf;application/oxps;application/epub+zip;application/x-fictionbook;
+StartupNotify=true

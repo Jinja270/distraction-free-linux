@@ -1,0 +1,266 @@
+{
+  "policies": {
+    "BlockAboutConfig": true,
+    "BlockAboutProfiles": true,
+    "BlockAboutSupport": true,
+    "DisableAppUpdate": true,
+    "DisableBuiltinPDFViewer": false,
+    "DisableDeveloperTools": true,
+    "DisableFeedbackCommands": true,
+    "DisableFirefoxAccounts": true,
+    "DisableFirefoxScreenshots": true,
+    "DisableFirefoxStudies": true,
+    "DisableForgetButton": false,
+    "DisableMasterPasswordCreation": true,
+    "DisablePasswordReveal": true,
+    "DisablePocket": true,
+    "DisablePrivateBrowsing": true,
+    "DisableProfileImport": true,
+    "DisableSafeMode": true,
+    "DisableSecurityBypass": {
+      "InvalidCertificate": true,
+      "SafeBrowsing": false
+    },
+    "DisableSetDesktopBackground": true,
+    "DisableTelemetry": true,
+    "DisplayBookmarksToolbar": "never",
+    "DisplayMenuBar": "default-off",
+    "DNSOverHTTPS": {
+      "Enabled": false,
+      "Locked": true
+    },
+    "DontCheckDefaultBrowser": true,
+    "ExtensionSettings": {
+      "*": {
+        "installation_mode": "blocked",
+        "blocked_install_message": "Browser extension installation is prohibited on this distraction-free study environment."
+      }
+    },
+    "InstallAddonsPermission": {
+      "Default": false
+    },
+    "NoDefaultBookmarks": true,
+    "OfferToSaveLogins": false,
+    "OverrideFirstRunPage": "",
+    "OverridePostUpdatePage": "",
+    "PasswordManagerEnabled": false,
+    "Permissions": {
+      "Camera": {
+        "BlockNewRequests": true,
+        "Locked": true
+      },
+      "Microphone": {
+        "BlockNewRequests": true,
+        "Locked": true
+      },
+      "Location": {
+        "BlockNewRequests": true,
+        "Locked": true
+      },
+      "Notifications": {
+        "BlockNewRequests": true,
+        "Locked": true
+      }
+    },
+    "Preferences": {
+      "network.trr.mode": {
+        "Value": 5,
+        "Status": "locked"
+      },
+      "network.trr.uri": {
+        "Value": "",
+        "Status": "locked"
+      },
+      "network.proxy.type": {
+        "Value": 5,
+        "Status": "locked"
+      },
+      "network.proxy.socks": {
+        "Value": "",
+        "Status": "locked"
+      },
+      "network.proxy.http": {
+        "Value": "",
+        "Status": "locked"
+      },
+      "network.proxy.ssl": {
+        "Value": "",
+        "Status": "locked"
+      },
+      "browser.safebrowsing.downloads.remote.enabled": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "datareporting.healthreport.uploadEnabled": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "toolkit.telemetry.enabled": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.newtabpage.enabled": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.startup.homepage": {
+        "Value": "about:blank",
+        "Status": "locked"
+      }
+    },
+    "Proxy": {
+      "Mode": "system",
+      "Locked": true
+    },
+    "WebsiteFilter": {
+      "Block": [
+        "*://*.reddit.com/*",
+        "*://reddit.com/*",
+        "*://*.redd.it/*",
+        "*://redd.it/*",
+        "*://*.redditmedia.com/*",
+        "*://*.redditstatic.com/*",
+        "*://*.youtube.com/*",
+        "*://youtube.com/*",
+        "*://*.youtu.be/*",
+        "*://*.googlevideo.com/*",
+        "*://*.ytimg.com/*",
+        "*://*.twitter.com/*",
+        "*://twitter.com/*",
+        "*://*.x.com/*",
+        "*://x.com/*",
+        "*://*.t.co/*",
+        "*://*.twimg.com/*",
+        "*://*.instagram.com/*",
+        "*://instagram.com/*",
+        "*://*.cdninstagram.com/*",
+        "*://*.tiktok.com/*",
+        "*://tiktok.com/*",
+        "*://*.tiktokcdn.com/*",
+        "*://*.byteoversea.com/*",
+        "*://*.facebook.com/*",
+        "*://facebook.com/*",
+        "*://*.fb.com/*",
+        "*://*.fbcdn.net/*",
+        "*://*.threads.net/*",
+        "*://threads.net/*",
+        "*://*.twitch.tv/*",
+        "*://twitch.tv/*",
+        "*://*.ttvnw.net/*",
+        "*://*.discord.com/*",
+        "*://discord.com/*",
+        "*://*.discord.gg/*",
+        "*://discord.gg/*",
+        "*://*.discordapp.com/*",
+        "*://*.discordapp.net/*",
+        "*://discordapp.net/*",
+        "*://*.dis.gd/*",
+        "*://dis.gd/*",
+        "*://*.netflix.com/*",
+        "*://netflix.com/*",
+        "*://*.disneyplus.com/*",
+        "*://disneyplus.com/*",
+        "*://*.primevideo.com/*",
+        "*://primevideo.com/*",
+        "*://*.hulu.com/*",
+        "*://hulu.com/*",
+        "*://*.max.com/*",
+        "*://max.com/*",
+        "*://*.hbomax.com/*",
+        "*://*.crunchyroll.com/*",
+        "*://*.kick.com/*",
+        "*://kick.com/*",
+        "*://*.vimeo.com/*",
+        "*://*.dailymotion.com/*",
+        "*://*.steampowered.com/*",
+        "*://steampowered.com/*",
+        "*://*.steamcommunity.com/*",
+        "*://*.steam-chat.com/*",
+        "*://steam-chat.com/*",
+        "*://*.epicgames.com/*",
+        "*://epicgames.com/*",
+        "*://*.roblox.com/*",
+        "*://roblox.com/*",
+        "*://*.chess.com/*",
+        "*://chess.com/*",
+        "*://*.lichess.org/*",
+        "*://*.battle.net/*",
+        "*://*.blizzard.com/*",
+        "*://*.riotgames.com/*",
+        "*://*.leagueoflegends.com/*",
+        "*://*.4chan.org/*",
+        "*://4chan.org/*",
+        "*://*.4channel.org/*",
+        "*://*.8kun.top/*",
+        "*://*.9gag.com/*",
+        "*://*.quora.com/*",
+        "*://quora.com/*",
+        "*://*.pinterest.com/*",
+        "*://pinterest.com/*",
+        "*://*.tumblr.com/*",
+        "*://*.snapchat.com/*",
+        "*://*.bsky.app/*",
+        "*://*.news.google.com/*",
+        "*://news.google.com/*",
+        "*://*.news.ycombinator.com/*",
+        "*://news.ycombinator.com/*",
+        "*://*.buzzfeed.com/*",
+        "*://*.spotify.com/*",
+        "*://spotify.com/*",
+        "*://*.open.spotify.com/*",
+        "*://*.soundcloud.com/*",
+        "*://soundcloud.com/*"
+      ],
+      "Exceptions": [
+        "https://*.chatgpt.com/*",
+        "https://chatgpt.com/*",
+        "https://*.openai.com/*",
+        "https://openai.com/*",
+        "https://*.oaistatic.com/*",
+        "https://oaistatic.com/*",
+        "https://*.oaiusercontent.com/*",
+        "https://oaiusercontent.com/*",
+        "https://*.claude.ai/*",
+        "https://claude.ai/*",
+        "https://*.anthropic.com/*",
+        "https://anthropic.com/*",
+        "https://*.assets.claude.ai/*",
+        "https://assets.claude.ai/*",
+        "https://*.notebooklm.google.com/*",
+        "https://notebooklm.google.com/*",
+        "https://*.scholar.google.com/*",
+        "https://scholar.google.com/*",
+        "https://*.scholar.googleusercontent.com/*",
+        "https://scholar.googleusercontent.com/*",
+        "https://*.wikipedia.org/*",
+        "https://wikipedia.org/*",
+        "https://*.wikimedia.org/*",
+        "https://wikimedia.org/*",
+        "https://*.upload.wikimedia.org/*",
+        "https://upload.wikimedia.org/*",
+        "https://*.wikidata.org/*",
+        "https://wikidata.org/*",
+        "https://*.w.wiki/*",
+        "https://w.wiki/*",
+        "https://*.accounts.google.com/*",
+        "https://accounts.google.com/*",
+        "https://*.oauth2.googleapis.com/*",
+        "https://oauth2.googleapis.com/*",
+        "https://*.ssl.gstatic.com/*",
+        "https://ssl.gstatic.com/*",
+        "https://*.gstatic.com/*",
+        "https://www.gstatic.com/*",
+        "https://fonts.googleapis.com/*",
+        "https://fonts.gstatic.com/*",
+        "https://*.docs.google.com/*",
+        "https://docs.google.com/*",
+        "https://*.drive.google.com/*",
+        "https://drive.google.com/*",
+        "https://*.challenges.cloudflare.com/*",
+        "https://challenges.cloudflare.com/*",
+        "https://*.cdnjs.cloudflare.com/*",
+        "https://cdnjs.cloudflare.com/*"
+      ]
+    }
+  }
+}

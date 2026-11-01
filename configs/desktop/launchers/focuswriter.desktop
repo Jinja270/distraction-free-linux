@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=FocusWriter
+Comment=Fullscreen distraction-free writing environment
+Exec=focuswriter %F
+Icon=focuswriter
+Terminal=false
+Categories=Office;WordProcessor;
+MimeType=text/plain;text/x-markdown;application/vnd.oasis.opendocument.text;
+StartupNotify=true

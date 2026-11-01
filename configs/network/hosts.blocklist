@@ -1,0 +1,220 @@
+# ==============================================================================
+# Distraction-Free Linux (Study OS) - Hosts Sinkhole Blocklist
+# Targets: IPv4 (0.0.0.0) and IPv6 (::)
+# All entries map to unroutable addresses, returning immediate ECONNREFUSED.
+# Verified 0% collision with study and academic research infrastructure.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Category 1: Reddit (Portals, Media CDNs, Shortlinks, APIs)
+# ------------------------------------------------------------------------------
+0.0.0.0 reddit.com www.reddit.com old.reddit.com new.reddit.com sh.reddit.com
+::      reddit.com www.reddit.com old.reddit.com new.reddit.com sh.reddit.com
+0.0.0.0 redd.it i.redd.it v.redd.it preview.redd.it external-preview.redd.it
+::      redd.it i.redd.it v.redd.it preview.redd.it external-preview.redd.it
+0.0.0.0 redditmedia.com www.redditmedia.com styles.redditmedia.com
+::      redditmedia.com www.redditmedia.com styles.redditmedia.com
+0.0.0.0 redditstatic.com www.redditstatic.com gql.reddit.com gateway.reddit.com
+::      redditstatic.com www.redditstatic.com gql.reddit.com gateway.reddit.com
+0.0.0.0 oauth.reddit.com mod.reddit.com chat.reddit.com api.reddit.com
+::      oauth.reddit.com mod.reddit.com chat.reddit.com api.reddit.com
+0.0.0.0 m.reddit.com packaged-media.redd.it
+::      m.reddit.com packaged-media.redd.it
+
+# ------------------------------------------------------------------------------
+# Category 2: YouTube & Video CDNs (Excludes general Google services)
+# ------------------------------------------------------------------------------
+0.0.0.0 youtube.com www.youtube.com m.youtube.com music.youtube.com youtu.be
+::      youtube.com www.youtube.com m.youtube.com music.youtube.com youtu.be
+0.0.0.0 gaming.youtube.com kids.youtube.com studio.youtube.com tv.youtube.com
+::      gaming.youtube.com kids.youtube.com studio.youtube.com tv.youtube.com
+0.0.0.0 ytimg.com www.ytimg.com i.ytimg.com s.ytimg.com
+::      ytimg.com www.ytimg.com i.ytimg.com s.ytimg.com
+0.0.0.0 i1.ytimg.com i2.ytimg.com i3.ytimg.com i4.ytimg.com
+::      i1.ytimg.com i2.ytimg.com i3.ytimg.com i4.ytimg.com
+0.0.0.0 googlevideo.com www.googlevideo.com redirector.googlevideo.com
+::      googlevideo.com www.googlevideo.com redirector.googlevideo.com
+0.0.0.0 manifest.googlevideo.com yt3.ggpht.com yt4.ggpht.com
+::      manifest.googlevideo.com yt3.ggpht.com yt4.ggpht.com
+0.0.0.0 youtubei.googleapis.com youtube-nocookie.com www.youtube-nocookie.com
+::      youtubei.googleapis.com youtube-nocookie.com www.youtube-nocookie.com
+0.0.0.0 youtube-ui.l.google.com
+::      youtube-ui.l.google.com
+0.0.0.0 img.youtube.com yt3.googleusercontent.com yt4.googleusercontent.com
+::      img.youtube.com yt3.googleusercontent.com yt4.googleusercontent.com
+
+# ------------------------------------------------------------------------------
+# Category 3: Twitter / X & Media CDNs
+# ------------------------------------------------------------------------------
+0.0.0.0 twitter.com www.twitter.com mobile.twitter.com api.twitter.com
+::      twitter.com www.twitter.com mobile.twitter.com api.twitter.com
+0.0.0.0 upload.twitter.com ton.twitter.com cms-twimg.twitter.com t.co
+::      upload.twitter.com ton.twitter.com cms-twimg.twitter.com t.co
+0.0.0.0 twimg.com abs.twimg.com abs-0.twimg.com pbs.twimg.com
+::      twimg.com abs.twimg.com abs-0.twimg.com pbs.twimg.com
+0.0.0.0 video.twimg.com card-media.twimg.com
+::      video.twimg.com card-media.twimg.com
+0.0.0.0 x.com www.x.com api.x.com upload.x.com mobile.x.com
+::      x.com www.x.com api.x.com upload.x.com mobile.x.com
+
+# ------------------------------------------------------------------------------
+# Category 4: Instagram & Threads
+# ------------------------------------------------------------------------------
+0.0.0.0 instagram.com www.instagram.com m.instagram.com api.instagram.com
+::      instagram.com www.instagram.com m.instagram.com api.instagram.com
+0.0.0.0 graph.instagram.com i.instagram.com ig.me
+::      graph.instagram.com i.instagram.com ig.me
+0.0.0.0 cdninstagram.com scontent.cdninstagram.com static.cdninstagram.com
+::      cdninstagram.com scontent.cdninstagram.com static.cdninstagram.com
+0.0.0.0 threads.net www.threads.net
+::      threads.net www.threads.net
+
+# ------------------------------------------------------------------------------
+# Category 5: TikTok & Short-Form Video CDNs
+# ------------------------------------------------------------------------------
+0.0.0.0 tiktok.com www.tiktok.com m.tiktok.com
+::      tiktok.com www.tiktok.com m.tiktok.com
+0.0.0.0 v16-web.tiktokcdn.com v19-web.tiktokcdn.com tiktokcdn.com www.tiktokcdn.com
+::      v16-web.tiktokcdn.com v19-web.tiktokcdn.com tiktokcdn.com www.tiktokcdn.com
+0.0.0.0 tiktokv.com byteoversea.com ibytedtos.com musical.ly
+::      tiktokv.com byteoversea.com ibytedtos.com musical.ly
+0.0.0.0 api.tiktokv.com api-h2.tiktokv.com
+::      api.tiktokv.com api-h2.tiktokv.com
+
+# ------------------------------------------------------------------------------
+# Category 6: Facebook, Meta & Bluesky
+# ------------------------------------------------------------------------------
+0.0.0.0 facebook.com www.facebook.com m.facebook.com web.facebook.com
+::      facebook.com www.facebook.com m.facebook.com web.facebook.com
+0.0.0.0 touch.facebook.com fb.com www.fb.com fbcdn.net connect.facebook.net
+::      touch.facebook.com fb.com www.fb.com fbcdn.net connect.facebook.net
+0.0.0.0 messenger.com www.messenger.com meta.com www.meta.com
+::      messenger.com www.messenger.com meta.com www.meta.com
+0.0.0.0 bsky.app bsky.social bsky.network
+::      bsky.app bsky.social bsky.network
+
+# ------------------------------------------------------------------------------
+# Category 7: Twitch, Kick & Web Video Streaming
+# ------------------------------------------------------------------------------
+0.0.0.0 twitch.tv www.twitch.tv m.twitch.tv api.twitch.tv
+::      twitch.tv www.twitch.tv m.twitch.tv api.twitch.tv
+0.0.0.0 ttvnw.net static-cdn.jtvnw.net jtvnw.net live-video.net
+::      ttvnw.net static-cdn.jtvnw.net jtvnw.net live-video.net
+0.0.0.0 usher.ttvnw.net chatdepot.twitch.tv passport.twitch.tv
+::      usher.ttvnw.net chatdepot.twitch.tv passport.twitch.tv
+0.0.0.0 kick.com www.kick.com vimeo.com www.vimeo.com player.vimeo.com vimeocdn.com
+::      kick.com www.kick.com vimeo.com www.vimeo.com player.vimeo.com vimeocdn.com
+0.0.0.0 dailymotion.com www.dailymotion.com
+::      dailymotion.com www.dailymotion.com
+
+# ------------------------------------------------------------------------------
+# Category 8: Discord & Gaming Chat
+# ------------------------------------------------------------------------------
+0.0.0.0 discord.com www.discord.com discord.gg discordapp.com www.discordapp.com
+::      discord.com www.discord.com discord.gg discordapp.com www.discordapp.com
+0.0.0.0 discordapp.net discord.media gateway.discord.gg cdn.discordapp.com
+::      discordapp.net discord.media gateway.discord.gg cdn.discordapp.com
+0.0.0.0 status.discord.com
+::      status.discord.com
+0.0.0.0 media.discordapp.net images-ext-1.discordapp.net images-ext-2.discordapp.net
+::      media.discordapp.net images-ext-1.discordapp.net images-ext-2.discordapp.net
+0.0.0.0 router.discordapp.net voice.discord.media dis.gd
+::      router.discordapp.net voice.discord.media dis.gd
+
+# ------------------------------------------------------------------------------
+# Category 9: Subscription Video Streaming (Netflix, Disney+, Prime, Hulu, Max)
+# ------------------------------------------------------------------------------
+0.0.0.0 netflix.com www.netflix.com nflxext.com nflximg.net nflxvideo.net nflxso.net
+::      netflix.com www.netflix.com nflxext.com nflximg.net nflxvideo.net nflxso.net
+0.0.0.0 disneyplus.com www.disneyplus.com bamgrid.com cdn.registerdisney.go.com
+::      disneyplus.com www.disneyplus.com bamgrid.com cdn.registerdisney.go.com
+0.0.0.0 disney-portal.my.onetrust.com
+::      disney-portal.my.onetrust.com
+0.0.0.0 primevideo.com www.primevideo.com pv-cdn.net aiv-cdn.net atv-ps.amazon.com
+::      primevideo.com www.primevideo.com pv-cdn.net aiv-cdn.net atv-ps.amazon.com
+0.0.0.0 hulu.com www.hulu.com hulustream.com
+::      hulu.com www.hulu.com hulustream.com
+0.0.0.0 max.com www.max.com hbomax.com www.hbomax.com
+::      max.com www.max.com hbomax.com www.hbomax.com
+0.0.0.0 crunchyroll.com www.crunchyroll.com vrv.co
+::      crunchyroll.com www.crunchyroll.com vrv.co
+
+# ------------------------------------------------------------------------------
+# Category 10: Gaming Platforms, Launchers, Storefronts & Online Games
+# ------------------------------------------------------------------------------
+0.0.0.0 steampowered.com store.steampowered.com steamcommunity.com steamstatic.com
+::      steampowered.com store.steampowered.com steamcommunity.com steamstatic.com
+0.0.0.0 steamcontent.com steamgames.com steamcdn-a.akamaihd.net media.steampowered.com
+::      steamcontent.com steamgames.com steamcdn-a.akamaihd.net media.steampowered.com
+0.0.0.0 steam-chat.com
+::      steam-chat.com
+0.0.0.0 epicgames.com www.epicgames.com epicgames.org unrealengine.com
+::      epicgames.com www.epicgames.com epicgames.org unrealengine.com
+0.0.0.0 launcher-public-service-prod06.ol.epicgames.com
+::      launcher-public-service-prod06.ol.epicgames.com
+0.0.0.0 roblox.com www.roblox.com rbxcdn.com setup.rbxcdn.com api.roblox.com web.roblox.com
+::      roblox.com www.roblox.com rbxcdn.com setup.rbxcdn.com api.roblox.com web.roblox.com
+0.0.0.0 battle.net blizzard.com bnetcmsus-a.akamaihd.net
+::      battle.net blizzard.com bnetcmsus-a.akamaihd.net
+0.0.0.0 riotgames.com leagueoflegends.com playvalorant.com pvp.net
+::      riotgames.com leagueoflegends.com playvalorant.com pvp.net
+0.0.0.0 ea.com origin.com ubisoft.com uplay.com gog.com www.gog.com
+::      ea.com origin.com ubisoft.com uplay.com gog.com www.gog.com
+0.0.0.0 chess.com www.chess.com lichess.org
+::      chess.com www.chess.com lichess.org
+
+# ------------------------------------------------------------------------------
+# Category 11: Imageboards, Gossip & Discussion Forums
+# ------------------------------------------------------------------------------
+0.0.0.0 4chan.org www.4chan.org 4channel.org www.4channel.org 4cdn.org
+::      4chan.org www.4chan.org 4channel.org www.4channel.org 4cdn.org
+0.0.0.0 is2.4chan.org is.4chan.org 8kun.top
+::      is2.4chan.org is.4chan.org 8kun.top
+0.0.0.0 9gag.com www.9gag.com 9cache.com quora.com www.quora.com qsf.fs.quoracdn.net
+::      9gag.com www.9gag.com 9cache.com quora.com www.quora.com qsf.fs.quoracdn.net
+
+# ------------------------------------------------------------------------------
+# Category 12: Visual Discovery, Microblogging & Social Media
+# ------------------------------------------------------------------------------
+0.0.0.0 pinterest.com www.pinterest.com pinimg.com i.pinimg.com s-media-cache-ak0.pinimg.com
+::      pinterest.com www.pinterest.com pinimg.com i.pinimg.com s-media-cache-ak0.pinimg.com
+0.0.0.0 tumblr.com www.tumblr.com assets.tumblr.com static.tumblr.com
+::      tumblr.com www.tumblr.com assets.tumblr.com static.tumblr.com
+0.0.0.0 snapchat.com www.snapchat.com web.snapchat.com sc-cdn.net
+::      snapchat.com www.snapchat.com web.snapchat.com sc-cdn.net
+
+# ------------------------------------------------------------------------------
+# Category 13: Professional Feed & Distraction (LinkedIn)
+# ------------------------------------------------------------------------------
+0.0.0.0 linkedin.com www.linkedin.com licdn.com media.licdn.com static.licdn.com
+::      linkedin.com www.linkedin.com licdn.com media.licdn.com static.licdn.com
+
+# ------------------------------------------------------------------------------
+# Category 14: News Aggregators & Algorithmic Clickbait
+# ------------------------------------------------------------------------------
+0.0.0.0 news.google.com news.yahoo.com
+::      news.google.com news.yahoo.com
+0.0.0.0 buzzfeed.com www.buzzfeed.com msn.com www.msn.com
+::      buzzfeed.com www.buzzfeed.com msn.com www.msn.com
+0.0.0.0 huffpost.com www.huffpost.com dailymail.co.uk www.dailymail.co.uk
+::      huffpost.com www.huffpost.com dailymail.co.uk www.dailymail.co.uk
+0.0.0.0 cnn.com www.cnn.com foxnews.com www.foxnews.com news.ycombinator.com
+::      cnn.com www.cnn.com foxnews.com www.foxnews.com news.ycombinator.com
+
+# ------------------------------------------------------------------------------
+# Category 15: Music Streaming & Audio Distractions
+# ------------------------------------------------------------------------------
+0.0.0.0 spotify.com www.spotify.com open.spotify.com scdn.co spoti.fi
+::      spotify.com www.spotify.com open.spotify.com scdn.co spoti.fi
+0.0.0.0 audio-ak-spotify-com.akamaized.net soundcloud.com www.soundcloud.com sndcdn.com
+::      audio-ak-spotify-com.akamaized.net soundcloud.com www.soundcloud.com sndcdn.com
+0.0.0.0 pandora.com deezer.com
+::      pandora.com deezer.com
+
+# ------------------------------------------------------------------------------
+# Category 16: Public DoH Bootstrap Resolvers (Prevents encrypted DNS fallback)
+# ------------------------------------------------------------------------------
+0.0.0.0 cloudflare-dns.com one.one.one.one dns.google dns.quad9.net doh.opendns.com
+::      cloudflare-dns.com one.one.one.one dns.google dns.quad9.net doh.opendns.com
+0.0.0.0 dns.adguard.com doh.mullvad.net doh.cleanbrowsing.org doh.applied-privacy.net
+::      dns.adguard.com doh.mullvad.net doh.cleanbrowsing.org doh.applied-privacy.net

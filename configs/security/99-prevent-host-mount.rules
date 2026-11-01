@@ -1,0 +1,15 @@
+// ==============================================================================
+// Distraction-Free Linux (Study OS) - Polkit Host Disk Mount Denial
+// File: configs/security/99-prevent-host-mount.rules
+// Purpose: Prohibit live users and unprivileged processes from mounting or
+//          unlocking internal host filesystems and encrypted volumes.
+// ==============================================================================
+
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.udisks2.filesystem-mount-system" ||
+        action.id == "org.freedesktop.udisks2.filesystem-mount-other-seat" ||
+        action.id == "org.freedesktop.udisks2.encrypted-unlock-system") {
+        // Strictly deny mounting and unlocking of internal host storage
+        return polkit.Result.NO;
+    }
+});

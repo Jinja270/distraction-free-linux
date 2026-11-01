@@ -1,0 +1,31 @@
+# Distraction-Free Calm Dark Theme & Configuration for Zathura Document Viewer
+# Injected into /etc/zathurarc and /etc/skel/.config/zathura/zathurarc
+
+# Recolor & Dark Palette for Eye Comfort during extended study sessions
+set recolor                     "true"
+set recolor-keephue             "true"
+set recolor-lightcolor          "#1e1e2e"
+set recolor-darkcolor           "#cdd6f4"
+set default-bg                  "#1e1e2e"
+set default-fg                  "#cdd6f4"
+
+# Statusbar & UI Styling
+set statusbar-bg                "#181825"
+set statusbar-fg                "#cdd6f4"
+set inputbar-bg                 "#181825"
+set inputbar-fg                 "#a6e3a1"
+set notification-bg             "#181825"
+set notification-fg             "#f38ba8"
+
+# Distraction-Free Canvas Geometry
+set selection-clipboard         "clipboard"
+set window-title-basename       "true"
+set statusbar-home-tilde        "true"
+set scroll-step                 "50"
+set font                        "sans-serif 11"
+
+# Keybindings: Tab toggles statusbar for 100% fullscreen reading
+map <Tab> toggle_statusbar
+map r rotate
+map [fullscreen] a adjust_window best-fit
+map [fullscreen] s adjust_window width

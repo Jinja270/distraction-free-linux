@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Pomodoro Focus Timer
+Comment=Distraction-free 25/5 study sprint and interval focus timer
+Exec=python3 /usr/local/bin/pomodoro_timer.py
+Icon=alarm-clock
+Terminal=false
+Categories=Utility;Clock;
+StartupNotify=true

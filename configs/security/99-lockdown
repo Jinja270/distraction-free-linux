@@ -1,0 +1,50 @@
+# ==============================================================================
+# Distraction-Free Linux (Study OS) - Sudoers Live Session Hardening
+# Path: /etc/sudoers.d/99-lockdown
+# Permissions: 0440 (root:root)
+# ==============================================================================
+
+# Ensure no password prompt for legitimate desktop admin tasks
+Defaults:ubuntu !authenticate
+
+# Forbid interactive shell escalations and bypasses
+Defaults:ubuntu !shell
+Defaults:ubuntu env_reset
+
+# Command aliases for sensitive utilities
+Cmnd_Alias TAMPER_ATTR = /usr/bin/chattr, /bin/chattr, /usr/bin/lsattr, /bin/lsattr, \
+                         /usr/bin/chmod, /bin/chmod
+Cmnd_Alias TAMPER_NET  = /usr/sbin/nft, /sbin/nft, /usr/sbin/iptables*, /sbin/iptables*, \
+                         /usr/sbin/ip6tables*, /sbin/ip6tables*, /usr/sbin/ufw, /sbin/ufw
+Cmnd_Alias TAMPER_SVC  = /bin/systemctl stop nftables*, /usr/bin/systemctl stop nftables*, \
+                         /bin/systemctl disable nftables*, /usr/bin/systemctl disable nftables*, \
+                         /bin/systemctl stop study-hosts-hardening*, /usr/bin/systemctl stop study-hosts-hardening*, \
+                         /bin/systemctl disable study-hosts-hardening*, /usr/bin/systemctl disable study-hosts-hardening*
+Cmnd_Alias TAMPER_AUTH = /usr/bin/passwd, /usr/sbin/visudo, /usr/bin/visudo, /usr/bin/su, /bin/su
+Cmnd_Alias TAMPER_HOSTS = /bin/nano /etc/hosts*, /usr/bin/nano /etc/hosts*, \
+                          /bin/vim /etc/hosts*, /usr/bin/vim /etc/hosts*, \
+                          /bin/vi /etc/hosts*, /usr/bin/vi /etc/hosts*, \
+                          /bin/cp * /etc/hosts*, /usr/bin/cp * /etc/hosts*, \
+                          /bin/mv * /etc/hosts*, /usr/bin/mv * /etc/hosts*, \
+                          /bin/rm /etc/hosts*, /usr/bin/rm /etc/hosts*, \
+                          /usr/bin/tee /etc/hosts*, /bin/tee /etc/hosts*, \
+                          /bin/sed * /etc/hosts*, /usr/bin/sed * /etc/hosts*
+Cmnd_Alias TAMPER_EDIT = /bin/nano*, /usr/bin/nano*, /bin/vim*, /usr/bin/vim*, /bin/vi*, /usr/bin/vi*, \
+                         /bin/cp*, /usr/bin/cp*, /bin/mv*, /usr/bin/mv*, /bin/rm*, /usr/bin/rm*, \
+                         /usr/bin/tee*, /bin/tee*, /bin/sed*, /usr/bin/sed*
+Cmnd_Alias TAMPER_INTERP = /usr/bin/python*, /bin/python*, /usr/bin/perl*, /bin/perl*, \
+                           /usr/bin/awk*, /bin/awk*, /usr/bin/env*
+Cmnd_Alias ROOT_SHELLS = /bin/bash, /usr/bin/bash, /bin/sh, /usr/bin/sh, /bin/zsh, /usr/bin/zsh, /bin/dash, /usr/bin/dash
+
+# Rule: Grant standard administration while explicitly revoking tamper commands
+# Explicitly negates bare editors (!/usr/bin/nano, !/bin/nano, !/usr/bin/vim, !/bin/vim), interpreters, and tamper aliases
+ubuntu ALL=(ALL) ALL, \
+       !TAMPER_ATTR, \
+       !TAMPER_NET, \
+       !TAMPER_SVC, \
+       !TAMPER_AUTH, \
+       !TAMPER_HOSTS, \
+       !TAMPER_EDIT, \
+       !TAMPER_INTERP, \
+       !ROOT_SHELLS, \
+       !/bin/nano, !/usr/bin/nano, !/bin/vim, !/usr/bin/vim

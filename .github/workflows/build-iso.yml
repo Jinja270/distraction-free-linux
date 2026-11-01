@@ -1,0 +1,124 @@
+name: Build Distraction-Free Linux ISO
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip pre-build automated tests'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-iso:
+    name: Build & Verify Live ISO (Ubuntu 24.04)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Maximize Runner Disk Space
+        run: |
+          echo "===================================================================="
+          echo "Initial Disk Usage on GitHub Actions Runner:"
+          echo "===================================================================="
+          df -h /
+          
+          echo "Removing heavy pre-installed runner SDKs and toolcaches..."
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/share/swift
+          sudo docker image prune --all --force 2>/dev/null || true
+          sudo apt-get clean
+          
+          echo "===================================================================="
+          echo "Post-Cleanup Disk Usage:"
+          echo "===================================================================="
+          df -h /
+
+      - name: Install ISO Build Dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y --no-install-recommends \
+            debootstrap \
+            squashfs-tools \
+            xorriso \
+            grub-pc-bin \
+            grub-efi-amd64-bin \
+            mtools \
+            dosfstools \
+            isolinux \
+            syslinux-common \
+            python3 \
+            zstd \
+            curl \
+            wget \
+            make \
+            ca-certificates
+
+      - name: Validate Shell Script Syntax (bash -n)
+        run: |
+          echo "Validating syntax of build_iso.sh..."
+          bash -n build_iso.sh
+          
+          echo "Validating syntax of modular scripts in scripts/..."
+          for script in scripts/*.sh; do
+            echo "Checking: ${script}"
+            bash -n "${script}"
+          done
+          echo "All shell scripts passed syntax check."
+
+      - name: Run E2E Test Suite (Tiers 1-4)
+        if: ${{ !inputs.skip_tests }}
+        run: |
+          echo "Executing full E2E test suite..."
+          python3 tests/e2e/run_all_tests.py
+
+      - name: Run Network Hardening Verification
+        if: ${{ !inputs.skip_tests }}
+        run: |
+          echo "Executing network hardening verification runner..."
+          python3 scripts/verify_blocking.py
+
+      - name: Compile Distraction-Free Linux Hybrid ISO
+        run: |
+          echo "Starting master 10-stage ISO build pipeline..."
+          sudo ./build_iso.sh \
+            --workdir /tmp/dfl \
+            --output /tmp/dfl/distraction-free-linux.iso \
+            --volume-id DFL_STUDY_OS \
+            --verbose
+
+      - name: Verify ISO Artifact & Checksums
+        run: |
+          echo "Verifying generated ISO artifact..."
+          test -f /tmp/dfl/distraction-free-linux.iso
+          test -s /tmp/dfl/distraction-free-linux.iso
+          
+          echo "Artifact details:"
+          ls -lh /tmp/dfl/distraction-free-linux.iso
+          
+          echo "SHA256 Checksum:"
+          cat /tmp/dfl/distraction-free-linux.iso.sha256
+
+      - name: Upload ISO & Checksum Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: distraction-free-linux-noble-amd64
+          path: |
+            /tmp/dfl/distraction-free-linux.iso
+            /tmp/dfl/distraction-free-linux.iso.sha256
+          retention-days: 14
+          if-no-files-found: error

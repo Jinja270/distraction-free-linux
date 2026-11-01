@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Evince Document Viewer
+Comment=View textbooks, research papers, and multi-page documents
+Exec=evince %U
+Icon=org.gnome.Evince
+Terminal=false
+Categories=Office;Viewer;Graphics;
+MimeType=application/pdf;application/x-bzpdf;application/x-gzpdf;application/postscript;
+StartupNotify=true
