@@ -28,24 +28,11 @@ jobs:
 
       - name: Maximize Runner Disk Space
         run: |
-          echo "===================================================================="
-          echo "Initial Disk Usage on GitHub Actions Runner:"
-          echo "===================================================================="
+          echo "Initial Disk Usage:"
           df -h /
-          
-          echo "Removing heavy pre-installed runner SDKs and toolcaches..."
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          sudo rm -rf /usr/local/share/powershell
-          sudo rm -rf /usr/share/swift
-          sudo docker image prune --all --force 2>/dev/null || true
-          sudo apt-get clean
-          
-          echo "===================================================================="
+          echo "Removing unused pre-installed runner SDKs..."
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/share/powershell
           echo "Post-Cleanup Disk Usage:"
-          echo "===================================================================="
           df -h /
 
       - name: Install ISO Build Dependencies
@@ -70,6 +57,7 @@ jobs:
 
       - name: Validate Shell Script Syntax (bash -n)
         run: |
+          chmod +x build_iso.sh scripts/*.sh
           echo "Validating syntax of build_iso.sh..."
           bash -n build_iso.sh
           
@@ -94,8 +82,10 @@ jobs:
 
       - name: Compile Distraction-Free Linux Hybrid ISO
         run: |
+          echo "Ensuring execution permissions..."
+          chmod +x build_iso.sh scripts/*.sh
           echo "Starting master 10-stage ISO build pipeline..."
-          sudo ./build_iso.sh \
+          sudo bash ./build_iso.sh \
             --workdir /tmp/dfl \
             --output /tmp/dfl/distraction-free-linux.iso \
             --volume-id DFL_STUDY_OS \
