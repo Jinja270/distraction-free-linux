@@ -182,6 +182,12 @@ install -m 0644 "${SCRIPT_DIR}/configs/desktop/package_manifest.txt" \
                "${ROOTFS_DIR}/etc/desktop-package-manifest.txt"
 chown root:root "${ROOTFS_DIR}/etc/desktop-package-manifest.txt" 2>/dev/null || true
 
+# Ensure graphical target and LightDM display manager are enabled by default
+if [ -d "${ROOTFS_DIR}/etc/systemd/system" ]; then
+    ln -sf /lib/systemd/system/graphical.target "${ROOTFS_DIR}/etc/systemd/system/default.target"
+    ln -sf /lib/systemd/system/lightdm.service "${ROOTFS_DIR}/etc/systemd/system/display-manager.service"
+fi
+
 echo "===================================================================="
 echo "Minimal XFCE Desktop installation completed successfully."
 echo "===================================================================="
