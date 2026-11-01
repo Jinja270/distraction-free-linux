@@ -94,14 +94,26 @@ if [ ! -f "${ISO_STAGING_DIR}/boot/efi.img" ] && command -v mkfs.vfat >/dev/null
 fi
 
 # Build Legacy BIOS El Torito boot image (boot/grub/i386-pc/eltorito.img) if missing
-if [ ! -f "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img" ] && command -v grub-mkstandalone >/dev/null 2>&1; then
+if [ ! -s "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img" ] && command -v grub-mkstandalone >/dev/null 2>&1; then
     echo "Compiling standalone i386-pc El Torito GRUB image..."
+    CORE_IMG="/tmp/dfl_core.img"
     grub-mkstandalone \
-        --format=i386-pc-eltorito \
-        --output="${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img" \
+        --format=i386-pc \
+        --output="${CORE_IMG}" \
         --locales="" \
         --fonts="" \
         "boot/grub/grub.cfg=${EMBEDDED_CFG}" 2>/dev/null || true
+    if [ -f /usr/lib/grub/i386-pc/cdboot.img ] && [ -s "${CORE_IMG}" ]; then
+        cat /usr/lib/grub/i386-pc/cdboot.img "${CORE_IMG}" > "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img"
+    elif [ -s "${CORE_IMG}" ]; then
+        cp "${CORE_IMG}" "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img"
+    fi
+    rm -f "${CORE_IMG}"
+fi
+
+# Clean up empty eltorito.img if it failed to generate
+if [ -f "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img" ] && [ ! -s "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img" ]; then
+    rm -f "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img"
 fi
 
 rm -f "${EMBEDDED_CFG}"
@@ -112,7 +124,7 @@ for candidate in \
     "/usr/lib/grub/i386-pc/boot_hybrid.img" \
     "/usr/lib/ISOLINUX/isohdpfx.bin" \
     "/usr/share/syslinux/isohdpfx.bin"; do
-    if [ -f "${candidate}" ]; then
+    if [ -s "${candidate}" ]; then
         MBR_IMG="${candidate}"
         break
     fi
@@ -135,8 +147,8 @@ XORRISO_ARGS=(
     -r
 )
 
-# Attach MBR hybrid boot record if available
-if [ -n "${MBR_IMG}" ]; then
+# Attach MBR hybrid boot record if available and BIOS eltorito is present
+if [ -n "${MBR_IMG}" ] && [ -s "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img" ]; then
     XORRISO_ARGS+=(
         --grub2-mbr "${MBR_IMG}"
         -partition_offset 16
@@ -144,8 +156,8 @@ if [ -n "${MBR_IMG}" ]; then
     )
 fi
 
-# Attach El Torito BIOS boot image if present
-if [ -f "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img" ]; then
+# Attach El Torito BIOS boot image only if non-empty
+if [ -s "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img" ]; then
     XORRISO_ARGS+=(
         -c "boot.catalog"
         -b "boot/grub/i386-pc/eltorito.img"
