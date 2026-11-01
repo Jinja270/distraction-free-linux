@@ -83,10 +83,34 @@ XFCE_PACKAGES=(
     alsa-utils
     vorbis-tools
     dconf-cli
+    virtualbox-guest-utils
+    virtualbox-guest-x11
+    software-properties-common
 )
 
 run_chroot apt-get update -y
 run_chroot apt-get install -y --no-install-recommends "${XFCE_PACKAGES[@]}"
+
+# ------------------------------------------------------------------------------
+# Install Native Mozilla Firefox (.deb without Snap bloat)
+# ------------------------------------------------------------------------------
+echo "===> Installing native Mozilla Firefox .deb via Mozilla Team PPA..."
+
+# Pin Mozilla Team PPA to prevent Ubuntu's transitional snap package
+install -d -m 0755 "${ROOTFS_DIR}/etc/apt/preferences.d"
+cat << 'EOF' > "${ROOTFS_DIR}/etc/apt/preferences.d/mozilla-firefox"
+Package: *
+Pin: release o=LP-PPA-mozillateam
+Pin-Priority: 1001
+
+Package: firefox*
+Pin: release o=Ubuntu*
+Pin-Priority: -1
+EOF
+
+run_chroot add-apt-repository -y ppa:mozillateam/ppa
+run_chroot apt-get update -y
+run_chroot apt-get install -y --no-install-recommends firefox
 
 # ------------------------------------------------------------------------------
 # 2. Configure Autologin for study user (GDM3 & LightDM)
@@ -99,7 +123,7 @@ cat << 'EOF' > "${ROOTFS_DIR}/etc/gdm3/custom.conf"
 [daemon]
 AutomaticLoginEnable=True
 AutomaticLogin=study
-WaylandEnable=true
+WaylandEnable=false
 EOF
 
 # Configure GNOME system-wide dconf defaults (dark mode, DND notifications, pinned study apps)
@@ -247,11 +271,27 @@ install -m 0644 "${SCRIPT_DIR}/configs/desktop/package_manifest.txt" \
                "${ROOTFS_DIR}/etc/desktop-package-manifest.txt"
 chown root:root "${ROOTFS_DIR}/etc/desktop-package-manifest.txt" 2>/dev/null || true
 
-# Ensure graphical target and LightDM display manager are enabled by default
+# Ensure graphical target and GDM3 display manager are enabled by default
 if [ -d "${ROOTFS_DIR}/etc/systemd/system" ]; then
     ln -sf /lib/systemd/system/graphical.target "${ROOTFS_DIR}/etc/systemd/system/default.target"
-    ln -sf /lib/systemd/system/lightdm.service "${ROOTFS_DIR}/etc/systemd/system/display-manager.service"
+    ln -sf /lib/systemd/system/gdm3.service "${ROOTFS_DIR}/etc/systemd/system/display-manager.service"
 fi
+run_chroot systemctl enable gdm3.service 2>/dev/null || true
+
+# Auto-trust desktop shortcuts for study user upon login
+install -d -m 0755 "${ROOTFS_DIR}/etc/profile.d"
+cat << 'EOF' > "${ROOTFS_DIR}/etc/profile.d/trust-desktop-files.sh"
+#!/bin/bash
+if [ -d "$HOME/Desktop" ]; then
+    for f in "$HOME/Desktop"/*.desktop; do
+        if [ -f "$f" ]; then
+            chmod +x "$f" 2>/dev/null || true
+            gio set "$f" metadata::trusted true 2>/dev/null || true
+        fi
+    done
+fi
+EOF
+chmod 0755 "${ROOTFS_DIR}/etc/profile.d/trust-desktop-files.sh"
 
 echo "===================================================================="
 echo "Minimal XFCE Desktop installation completed successfully."
