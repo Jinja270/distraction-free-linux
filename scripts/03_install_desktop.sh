@@ -63,36 +63,74 @@ fi
 # ------------------------------------------------------------------------------
 echo "===> [1/6] Installing minimal XFCE packages..."
 
-# Core XFCE, X11, Display Manager, and UI Theme packages
+# Core Ubuntu GNOME, X11, Display Manager, and UI Theme packages
 XFCE_PACKAGES=(
     xorg
     xserver-xorg-video-all
     xserver-xorg-input-all
-    xfce4-session
-    xfwm4
-    xfce4-panel
-    xfdesktop4
-    xfce4-settings
-    thunar
-    lightdm
-    lightdm-gtk-greeter
-    greybird-gtk-theme
+    ubuntu-desktop-minimal
+    gdm3
+    gnome-shell
+    gnome-control-center
+    gnome-terminal
+    nautilus
+    gnome-calculator
+    gnome-screenshot
+    yaru-theme-gnome-shell
+    yaru-theme-gtk
+    yaru-theme-icon
     papirus-icon-theme
-    xfce4-notifyd
-    xfce4-pulseaudio-plugin
-    pavucontrol
-    pulseaudio
     alsa-utils
     vorbis-tools
+    dconf-cli
 )
 
 run_chroot apt-get update -y
 run_chroot apt-get install -y --no-install-recommends "${XFCE_PACKAGES[@]}"
 
 # ------------------------------------------------------------------------------
-# 2. Configure LightDM Zero-Second Passwordless Autologin
+# 2. Configure Autologin for study user (GDM3 & LightDM)
 # ------------------------------------------------------------------------------
-echo "===> [2/6] Configuring LightDM autologin for study user..."
+echo "===> [2/6] Configuring GDM3 and LightDM autologin for study user..."
+
+install -d -m 0755 "${ROOTFS_DIR}/etc/gdm3"
+cat << 'EOF' > "${ROOTFS_DIR}/etc/gdm3/custom.conf"
+# GDM3 autologin configuration for Distraction-Free Study OS
+[daemon]
+AutomaticLoginEnable=True
+AutomaticLogin=study
+WaylandEnable=true
+EOF
+
+# Configure GNOME system-wide dconf defaults (dark mode, DND notifications, pinned study apps)
+install -d -m 0755 "${ROOTFS_DIR}/etc/dconf/profile"
+cat << 'EOF' > "${ROOTFS_DIR}/etc/dconf/profile/user"
+user-db:user
+system-db:local
+EOF
+
+install -d -m 0755 "${ROOTFS_DIR}/etc/dconf/db/local.d"
+cat << 'EOF' > "${ROOTFS_DIR}/etc/dconf/db/local.d/00-study-defaults"
+[org/gnome/desktop/interface]
+color-scheme='prefer-dark'
+gtk-theme='Yaru-dark'
+icon-theme='Yaru'
+
+[org/gnome/desktop/notifications]
+show-banners=false
+
+[org/gnome/desktop/session]
+idle-delay=uint32 0
+
+[org/gnome/settings-daemon/plugins/power]
+sleep-inactive-ac-type='nothing'
+sleep-inactive-battery-type='nothing'
+
+[org/gnome/shell]
+favorite-apps=['firefox.desktop', 'anki.desktop', 'evince.desktop', 'focuswriter.desktop', 'featherpad.desktop', 'pomodoro-timer.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop']
+EOF
+
+run_chroot dconf update 2>/dev/null || true
 
 install -d -m 0755 "${ROOTFS_DIR}/etc/lightdm/lightdm.conf.d"
 install -m 0644 "${SCRIPT_DIR}/configs/desktop/lightdm-autologin.conf" \
@@ -188,18 +226,12 @@ BLOAT_PURGE_LIST=(
     zeitgeist-datahub
     geoclue
     geoclue-2.0
-    cups
-    cups-browsed
-    cups-daemon
-    cups-client
-    avahi-daemon
-    avahi-autoipd
-    bluetooth
-    bluez
-    bluez-cups
-    modemmanager
     speech-dispatcher
     snapd
+    ubiquity
+    ubiquity-frontend-gtk
+    calamares
+    subiquity
 )
 
 run_chroot apt-get purge -y --auto-remove "${BLOAT_PURGE_LIST[@]}" 2>/dev/null || true

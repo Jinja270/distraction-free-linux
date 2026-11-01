@@ -106,16 +106,30 @@ if [ ! -f "${ISO_STAGING_DIR}/boot/efi.img" ] && command -v mkfs.vfat >/dev/null
 fi
 
 # Build Legacy BIOS El Torito boot image (boot/grub/i386-pc/eltorito.img) if missing
-if [ ! -s "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img" ] && command -v grub-mkstandalone >/dev/null 2>&1; then
-    echo "Compiling standalone i386-pc El Torito GRUB image..."
+if [ ! -s "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img" ]; then
+    mkdir -p "${ISO_STAGING_DIR}/boot/grub/i386-pc"
     CORE_IMG="/tmp/dfl_core.img"
-    grub-mkstandalone \
-        --format=i386-pc \
-        --output="${CORE_IMG}" \
-        --locales="" \
-        --fonts="" \
-        "boot/grub/grub.cfg=${EMBEDDED_CFG}" 2>/dev/null || true
+    if command -v grub-mkimage >/dev/null 2>&1; then
+        echo "Generating i386-pc core image with grub-mkimage..."
+        grub-mkimage \
+            -O i386-pc \
+            -o "${CORE_IMG}" \
+            -p "/boot/grub" \
+            -c "${EMBEDDED_CFG}" \
+            iso9660 biosdisk search search_fs_file test echo normal linux || true
+    fi
+    if [ ! -s "${CORE_IMG}" ] && command -v grub-mkstandalone >/dev/null 2>&1; then
+        echo "Fallback: Compiling standalone i386-pc GRUB image..."
+        grub-mkstandalone \
+            --format=i386-pc \
+            --output="${CORE_IMG}" \
+            --modules="${GRUB_MODULES} biosdisk" \
+            --locales="" \
+            --fonts="" \
+            "boot/grub/grub.cfg=${EMBEDDED_CFG}" || true
+    fi
     if [ -f /usr/lib/grub/i386-pc/cdboot.img ] && [ -s "${CORE_IMG}" ]; then
+        echo "Creating El Torito boot image (cdboot.img + core.img)..."
         cat /usr/lib/grub/i386-pc/cdboot.img "${CORE_IMG}" > "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img"
     elif [ -s "${CORE_IMG}" ]; then
         cp "${CORE_IMG}" "${ISO_STAGING_DIR}/boot/grub/i386-pc/eltorito.img"

@@ -104,6 +104,23 @@ KERNEL_PACKAGES=(
     linux-headers-generic
     casper
     zram-tools
+    linux-firmware
+    firmware-sof-signed
+    alsa-ucm-conf
+    wireless-regdb
+    bluez
+    bluez-tools
+    pipewire
+    pipewire-pulse
+    pipewire-audio
+    wireplumber
+    libspa-0.2-bluetooth
+    power-profiles-daemon
+    intel-media-va-driver
+    mesa-va-drivers
+    mesa-vulkan-drivers
+    xserver-xorg-input-libinput
+    libinput-tools
 )
 
 run_chroot apt-get install -y --no-install-recommends "${KERNEL_PACKAGES[@]}"

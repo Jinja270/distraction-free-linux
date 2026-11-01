@@ -137,9 +137,11 @@ chattr +i "${ROOTFS_DIR}/usr/lib/firefox/distribution/policies.json" 2>/dev/null
 # ------------------------------------------------------------------------------
 # 4. Deploy Automated Verification Tools to System Path
 # ------------------------------------------------------------------------------
-echo "===> [4/4] Installing verification scripts to /usr/local/bin..."
+echo "===> [4/4] Installing verification scripts and study-whitelist utility to /usr/local/bin..."
 
 install -d -m 0755 "${ROOTFS_DIR}/usr/local/bin"
+install -d -m 0755 "${ROOTFS_DIR}/usr/local/sbin"
+
 install -m 0755 "${SCRIPT_DIR}/scripts/verify_blocking.sh" \
                "${ROOTFS_DIR}/usr/local/bin/verify_blocking.sh"
 install -m 0755 "${SCRIPT_DIR}/scripts/verify_blocking.py" \
@@ -147,6 +149,72 @@ install -m 0755 "${SCRIPT_DIR}/scripts/verify_blocking.py" \
 
 chown root:root "${ROOTFS_DIR}/usr/local/bin/verify_blocking.sh" 2>/dev/null || true
 chown root:root "${ROOTFS_DIR}/usr/local/bin/verify_blocking.py" 2>/dev/null || true
+
+# Deploy Emergency Study Whitelist Tool
+cat << 'EOF' > "${ROOTFS_DIR}/usr/local/bin/study-whitelist"
+#!/bin/bash
+# ==============================================================================
+# Distraction-Free Linux (Study OS) - Emergency Domain Whitelist Utility
+# Purpose: Allows unblocking educational/school domains without disabling lockdown.
+# Usage: sudo study-whitelist <domain> [domain2 ...]
+# ==============================================================================
+set -euo pipefail
+
+if [ "$(id -u)" -ne 0 ]; then
+    echo "ERROR: study-whitelist must be run as root (e.g. sudo study-whitelist <domain>)." >&2
+    exit 1
+fi
+
+if [ $# -lt 1 ]; then
+    echo "Usage: sudo study-whitelist <domain> [domain2 ...]"
+    echo "Example: sudo study-whitelist canvas.asu.edu blackboard.com"
+    exit 1
+fi
+
+HOSTS_FILE="/etc/hosts"
+WHITELIST_LOG="/etc/study-whitelisted-domains.txt"
+
+# Ensure immutable flag is removed before modifying hosts if set
+chattr -i "${HOSTS_FILE}" 2>/dev/null || true
+
+for raw_domain in "$@"; do
+    clean_domain="$(echo "${raw_domain}" | sed -e 's~^https\?://~~' -e 's~/.*~~' -e 's~^www\.~~' | tr '[:upper:]' '[:lower:]')"
+    
+    if [ -z "${clean_domain}" ]; then
+        continue
+    fi
+    
+    echo "===> Whitelisting domain: ${clean_domain}"
+    
+    # Remove exact match and wildcard from /etc/hosts
+    sed -i "/[[:space:]]${clean_domain}$/d" "${HOSTS_FILE}" 2>/dev/null || true
+    sed -i "/[[:space:]]www\.${clean_domain}$/d" "${HOSTS_FILE}" 2>/dev/null || true
+    sed -i "/[[:space:]]\*\.${clean_domain}$/d" "${HOSTS_FILE}" 2>/dev/null || true
+    
+    echo "${clean_domain}" >> "${WHITELIST_LOG}"
+done
+
+if [ -f "${WHITELIST_LOG}" ]; then
+    sort -u -o "${WHITELIST_LOG}" "${WHITELIST_LOG}"
+fi
+
+chmod 0644 "${HOSTS_FILE}"
+
+if command -v resolvectl >/dev/null 2>&1; then
+    resolvectl flush-caches 2>/dev/null || true
+elif command -v systemd-resolve >/dev/null 2>&1; then
+    systemd-resolve --flush-caches 2>/dev/null || true
+fi
+
+echo "===================================================================="
+echo "[SUCCESS] Domain(s) successfully whitelisted!"
+echo "Access is now active in your browser and terminal."
+echo "===================================================================="
+exit 0
+EOF
+chmod 0755 "${ROOTFS_DIR}/usr/local/bin/study-whitelist"
+ln -sf /usr/local/bin/study-whitelist "${ROOTFS_DIR}/usr/local/sbin/study-whitelist"
+chown root:root "${ROOTFS_DIR}/usr/local/bin/study-whitelist" 2>/dev/null || true
 
 echo "===================================================================="
 echo "Milestone 1 Lockdown successfully integrated into ${ROOTFS_DIR}."
