@@ -89,12 +89,12 @@ deb ${UBUNTU_MIRROR} ${UBUNTU_RELEASE}-backports main restricted universe multiv
 EOF
 
 # Set system hostname
-echo "distraction-free-study" > "${TARGET_DIR}/etc/hostname"
+echo "distraction-free" > "${TARGET_DIR}/etc/hostname"
 
 # Set base /etc/hosts (pre-lockdown stage)
 cat << 'EOF' > "${TARGET_DIR}/etc/hosts"
-127.0.0.1   localhost distraction-free-study
-127.0.1.1   distraction-free-study
+127.0.0.1   localhost distraction-free distraction-free-study
+127.0.1.1   distraction-free distraction-free-study
 ::1         localhost ip6-localhost ip6-loopback
 ff02::1     ip6-allnodes
 ff02::2     ip6-allrouters

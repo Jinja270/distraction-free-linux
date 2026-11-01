@@ -18,7 +18,48 @@ echo "===================================================================="
 export DEBIAN_FRONTEND=noninteractive
 
 # ------------------------------------------------------------------------------
-# 1. Install Repository Study Tools & Document Viewers
+# 1. Mount Helper & Chroot Execution Setup
+# ------------------------------------------------------------------------------
+MOUNTED=false
+
+cleanup_mounts() {
+    if [ "${MOUNTED}" = "true" ] && [ "${ROOTFS_DIR}" != "/" ]; then
+        echo "Cleaning up chroot virtual filesystem mounts in 04_install_study_tools..."
+        umount -lf "${ROOTFS_DIR}/dev/pts" 2>/dev/null || true
+        umount -lf "${ROOTFS_DIR}/dev" 2>/dev/null || true
+        umount -lf "${ROOTFS_DIR}/proc" 2>/dev/null || true
+        umount -lf "${ROOTFS_DIR}/sys" 2>/dev/null || true
+    fi
+}
+trap cleanup_mounts EXIT INT TERM
+
+run_chroot() {
+    if [ "${ROOTFS_DIR}" = "/" ]; then
+        "$@"
+    else
+        chroot "${ROOTFS_DIR}" "$@"
+    fi
+}
+
+if [ "${ROOTFS_DIR}" != "/" ]; then
+    if [ ! -d "${ROOTFS_DIR}" ]; then
+        echo "ERROR: Target rootfs directory '${ROOTFS_DIR}' does not exist." >&2
+        exit 1
+    fi
+
+    mount --bind /dev "${ROOTFS_DIR}/dev"
+    mount --bind /dev/pts "${ROOTFS_DIR}/dev/pts"
+    mount -t proc proc "${ROOTFS_DIR}/proc"
+    mount -t sysfs sysfs "${ROOTFS_DIR}/sys"
+    MOUNTED=true
+
+    if [ -f /etc/resolv.conf ]; then
+        cp -L /etc/resolv.conf "${ROOTFS_DIR}/etc/resolv.conf" 2>/dev/null || true
+    fi
+fi
+
+# ------------------------------------------------------------------------------
+# 2. Install Repository Study Tools & Document Viewers
 # ------------------------------------------------------------------------------
 echo "===> [1/5] Installing document viewers, writing tools, and dependencies..."
 
@@ -38,10 +79,8 @@ STUDY_PACKAGES=(
     zstd
 )
 
-if command -v apt-get >/dev/null 2>&1; then
-    apt-get update -y
-    apt-get install -y --no-install-recommends "${STUDY_PACKAGES[@]}"
-fi
+run_chroot apt-get update -y
+run_chroot apt-get install -y --no-install-recommends "${STUDY_PACKAGES[@]}"
 
 # ------------------------------------------------------------------------------
 # 2. Install Anki (Spaced Repetition Flashcards)
@@ -68,9 +107,9 @@ if [ -f "${ANKI_TARBALL}" ] || (command -v curl >/dev/null 2>&1 && curl -fsSL -m
 fi
 
 # Fallback to apt anki package if standalone download was skipped/failed
-if [ "${ANKI_INSTALLED}" = false ] && command -v apt-get >/dev/null 2>&1; then
+if [ "${ANKI_INSTALLED}" = false ]; then
     echo "Installing Anki from apt repository..."
-    apt-get install -y --no-install-recommends anki 2>/dev/null || true
+    run_chroot apt-get install -y --no-install-recommends anki 2>/dev/null || true
 fi
 
 # ------------------------------------------------------------------------------

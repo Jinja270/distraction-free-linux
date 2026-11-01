@@ -18,7 +18,48 @@ echo "===================================================================="
 export DEBIAN_FRONTEND=noninteractive
 
 # ------------------------------------------------------------------------------
-# 1. Install Minimal XFCE Desktop Environment & Core Dependencies
+# 1. Mount Helper & Chroot Execution Setup
+# ------------------------------------------------------------------------------
+MOUNTED=false
+
+cleanup_mounts() {
+    if [ "${MOUNTED}" = "true" ] && [ "${ROOTFS_DIR}" != "/" ]; then
+        echo "Cleaning up chroot virtual filesystem mounts..."
+        umount -lf "${ROOTFS_DIR}/dev/pts" 2>/dev/null || true
+        umount -lf "${ROOTFS_DIR}/dev" 2>/dev/null || true
+        umount -lf "${ROOTFS_DIR}/proc" 2>/dev/null || true
+        umount -lf "${ROOTFS_DIR}/sys" 2>/dev/null || true
+    fi
+}
+trap cleanup_mounts EXIT INT TERM
+
+run_chroot() {
+    if [ "${ROOTFS_DIR}" = "/" ]; then
+        "$@"
+    else
+        chroot "${ROOTFS_DIR}" "$@"
+    fi
+}
+
+if [ "${ROOTFS_DIR}" != "/" ]; then
+    if [ ! -d "${ROOTFS_DIR}" ]; then
+        echo "ERROR: Target rootfs directory '${ROOTFS_DIR}' does not exist." >&2
+        exit 1
+    fi
+
+    mount --bind /dev "${ROOTFS_DIR}/dev"
+    mount --bind /dev/pts "${ROOTFS_DIR}/dev/pts"
+    mount -t proc proc "${ROOTFS_DIR}/proc"
+    mount -t sysfs sysfs "${ROOTFS_DIR}/sys"
+    MOUNTED=true
+
+    if [ -f /etc/resolv.conf ]; then
+        cp -L /etc/resolv.conf "${ROOTFS_DIR}/etc/resolv.conf" 2>/dev/null || true
+    fi
+fi
+
+# ------------------------------------------------------------------------------
+# 2. Install Minimal XFCE Desktop Environment & Core Dependencies
 # ------------------------------------------------------------------------------
 echo "===> [1/6] Installing minimal XFCE packages..."
 
@@ -45,10 +86,8 @@ XFCE_PACKAGES=(
     vorbis-tools
 )
 
-if command -v apt-get >/dev/null 2>&1; then
-    apt-get update -y
-    apt-get install -y --no-install-recommends "${XFCE_PACKAGES[@]}"
-fi
+run_chroot apt-get update -y
+run_chroot apt-get install -y --no-install-recommends "${XFCE_PACKAGES[@]}"
 
 # ------------------------------------------------------------------------------
 # 2. Configure LightDM Zero-Second Passwordless Autologin
@@ -61,19 +100,15 @@ install -m 0644 "${SCRIPT_DIR}/configs/desktop/lightdm-autologin.conf" \
 chown root:root "${ROOTFS_DIR}/etc/lightdm/lightdm.conf.d/50-autologin.conf" 2>/dev/null || true
 
 # Provision live 'study' user and required autologin groups if running in rootfs
-if command -v groupadd >/dev/null 2>&1; then
-    groupadd -r autologin 2>/dev/null || true
-    groupadd -r nopasswdlogin 2>/dev/null || true
-fi
+run_chroot groupadd -r autologin 2>/dev/null || true
+run_chroot groupadd -r nopasswdlogin 2>/dev/null || true
 
-if command -v useradd >/dev/null 2>&1; then
-    if ! id -u study >/dev/null 2>&1; then
-        useradd -m -s /bin/bash -u 1000 -g users \
-            -G sudo,audio,video,plugdev,netdev,autologin,nopasswdlogin study 2>/dev/null || true
-        echo "study:study" | chpasswd 2>/dev/null || true
-    else
-        usermod -aG autologin,nopasswdlogin,audio,video,sudo study 2>/dev/null || true
-    fi
+if ! run_chroot id -u study >/dev/null 2>&1; then
+    run_chroot useradd -m -s /bin/bash -u 1000 -g users \
+        -G sudo,audio,video,plugdev,netdev,autologin,nopasswdlogin study 2>/dev/null || true
+    echo "study:study" | run_chroot chpasswd 2>/dev/null || true
+else
+    run_chroot usermod -aG autologin,nopasswdlogin,audio,video,sudo study 2>/dev/null || true
 fi
 
 # Passwordless sudo for study user
@@ -167,11 +202,9 @@ BLOAT_PURGE_LIST=(
     snapd
 )
 
-if command -v apt-get >/dev/null 2>&1; then
-    apt-get purge -y --auto-remove "${BLOAT_PURGE_LIST[@]}" 2>/dev/null || true
-    apt-get autoremove -y 2>/dev/null || true
-    apt-get clean 2>/dev/null || true
-fi
+run_chroot apt-get purge -y --auto-remove "${BLOAT_PURGE_LIST[@]}" 2>/dev/null || true
+run_chroot apt-get autoremove -y 2>/dev/null || true
+run_chroot apt-get clean 2>/dev/null || true
 
 # ------------------------------------------------------------------------------
 # 6. Archive Package Manifest to Rootfs
