@@ -51,6 +51,16 @@ if [ -f "${SCRIPT_DIR}/configs/boot/loopback.cfg" ]; then
     cp -v "${SCRIPT_DIR}/configs/boot/loopback.cfg" "${ISO_STAGING_DIR}/boot/grub/loopback.cfg"
 fi
 
+# Copy GRUB module trees so dynamic module loading always succeeds
+if [ -d /usr/lib/grub/x86_64-efi ]; then
+    echo "Staging x86_64-efi GRUB modules..."
+    cp -r /usr/lib/grub/x86_64-efi "${ISO_STAGING_DIR}/boot/grub/"
+fi
+if [ -d /usr/lib/grub/i386-pc ]; then
+    echo "Staging i386-pc GRUB modules..."
+    cp -r /usr/lib/grub/i386-pc "${ISO_STAGING_DIR}/boot/grub/"
+fi
+
 # Write .disk metadata
 echo "Distraction-Free Linux (Study OS) 24.04 LTS amd64 - $(date +%Y%m%d)" > "${ISO_STAGING_DIR}/.disk/info"
 echo "full_cd/single" > "${ISO_STAGING_DIR}/.disk/cd_type"
@@ -61,22 +71,24 @@ echo "full_cd/single" > "${ISO_STAGING_DIR}/.disk/cd_type"
 echo "===> [2/4] Verifying and generating UEFI and BIOS boot payloads..."
 
 mkdir -p "${ISO_STAGING_DIR}/EFI/BOOT"
-mkdir -p "${ISO_STAGING_DIR}/boot/grub/i386-pc"
 
 # Create minimal embedded grub configuration if grub-mkstandalone is used
 EMBEDDED_CFG="/tmp/dfl_embedded_grub.cfg"
 cat << 'EOF' > "${EMBEDDED_CFG}"
-search --file --set=root /casper/vmlinuz
+search --no-floppy --file --set=root /casper/vmlinuz
 set prefix=($root)/boot/grub
-configfile $prefix/grub.cfg
+configfile ($root)/boot/grub/grub.cfg
 EOF
 
+GRUB_MODULES="iso9660 fat part_msdos part_gpt search search_fs_file configfile normal linux test echo all_video gfxterm font"
+
 # Build UEFI standalone binary (BOOTX64.EFI) if missing
-if [ ! -f "${ISO_STAGING_DIR}/EFI/BOOT/BOOTX64.EFI" ] && command -v grub-mkstandalone >/dev/null 2>&1; then
+if [ ! -s "${ISO_STAGING_DIR}/EFI/BOOT/BOOTX64.EFI" ] && command -v grub-mkstandalone >/dev/null 2>&1; then
     echo "Compiling standalone x86_64-efi GRUB binary..."
     grub-mkstandalone \
         --format=x86_64-efi \
         --output="${ISO_STAGING_DIR}/EFI/BOOT/BOOTX64.EFI" \
+        --modules="${GRUB_MODULES}" \
         --locales="" \
         --fonts="" \
         "boot/grub/grub.cfg=${EMBEDDED_CFG}" 2>/dev/null || true
